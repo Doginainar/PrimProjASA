@@ -7,13 +7,13 @@ using namespace std;
 
 vector<int> list;
 vector<int> list2;
-vector<int> lis;
+vector<int> size_seq;
 vector<int> lis2;
-vector<int> number_lis;
+vector<int> number_seq;
 vector<int> number_lis2;
 
 
-int new_max;
+int max_size;
 string mode;
 string input1;
 string input2;
@@ -32,8 +32,8 @@ void getIntsProb(string str, int flag)
        if(flag == 1) {
            if (stringstream(temp) >> number){
                list.push_back(number);
-               lis.push_back(1);
-               number_lis.push_back(1);
+               size_seq.push_back(1);
+               number_seq.push_back(1);
            }
        }
 
@@ -64,18 +64,6 @@ void parse(){
         getline(cin, input2);
         getIntsProb(input2,2);
     }
-
-    /*file.open("testfile");
-    getline(file,mode);
-    getline(file,input1);
-    getIntsProb(input1,1);
-    if(mode == "2"){
-        getline(file, input2);
-        getIntsProb(input2,2);
-    }
-
-
-    file.close();*/
 }
 
 unsigned long  index_max(vector<int> v) {
@@ -107,26 +95,26 @@ int main() {
         for (unsigned long i = 1; i < size; i++) {
             for (unsigned long j = 0; j < i; j++) {
                 if (list[j] < list[i]) {
-                    if (lis[j] + 1 > lis[i]) {
-                        lis[i] = lis[j] + 1;
-                        number_lis[i] = number_lis[j];
+                    
+                    if (size_seq[j] + 1 > size_seq[i]) {
+                        size_seq[i] = size_seq[j] + 1;
+                        number_seq[i] = number_seq[j];
                     }
 
-                    else if (lis[j] + 1 == lis[i]){
-                        number_lis[i] += number_lis[j];
+                    else if (size_seq[j] + 1 == size_seq[i]){
+                        number_seq[i] += number_seq[j];
                     }
-
                 }
             }
         }
-        new_max = lis[index_max(lis)];
-        int count = 0;
+        max_size = size_seq[index_max(size_seq)];
+        int n_sized_subsequences = 0;
         for(unsigned long  i = 0; i < size; i++){
-            if(lis[i] == new_max){
-                count += number_lis[i];
+            if(size_seq[i] == max_size ){
+                n_sized_subsequences += number_seq[i];
             }
         }
-        cout << new_max << ' ' << count << endl;
+        cout << max_size << ' ' << n_sized_subsequences << endl;
     }
     if(mode == "2"){
         unsigned long size1 = list.size();

@@ -1,0 +1,3 @@
+/home/nunodendas/Documents/Faculdade/ASA/PrimProjASA/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/nunodendas/Documents/Faculdade/ASA/PrimProjASA/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/nunodendas/Documents/Faculdade/ASA/PrimProjASA/cmake-build-debug/CMakeFiles/PrimProjASA.dir

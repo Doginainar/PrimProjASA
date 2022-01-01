@@ -12,11 +12,11 @@ vector<int> lis2;
 vector<int> number_seq;
 vector<int> number_lis2;
 
-
-int max_size;
 string mode;
 string input1;
 string input2;
+
+unsigned long size = 0;
 
 void getIntsProb(string str, int flag)
 {
@@ -34,6 +34,7 @@ void getIntsProb(string str, int flag)
                list.push_back(number);
                size_seq.push_back(1);
                number_seq.push_back(1);
+               size++;
            }
        }
 
@@ -45,15 +46,9 @@ void getIntsProb(string str, int flag)
            }
 
        }
-
-
-
         temp = "";
     }
 }
-
-
-
 
 void parse(){
     ifstream file;
@@ -66,32 +61,11 @@ void parse(){
     }
 }
 
-unsigned long  index_max(vector<int> v) {
-    unsigned long size = v.size();
-    int max;
-    unsigned long max_index = 0;
-    for (unsigned long i = 0; i < size; i++) {
-        if (i == 0) {
-            max = v[0];
-            max_index = 0;
-        }
-        if (v[i] > max) {
-            max = v[i];
-            max_index = i;
-        }
-
-
-    }
-    return max_index;
-}
-
-
-
-
 int main() {
     parse();
     if(mode == "1"){
-        unsigned long size = list.size();
+        int max_size = 1;
+        int number_of_subsequences = 1;
         for (unsigned long i = 1; i < size; i++) {
             for (unsigned long j = 0; j < i; j++) {
                 if (list[j] < list[i]) {
@@ -106,15 +80,16 @@ int main() {
                     }
                 }
             }
-        }
-        max_size = size_seq[index_max(size_seq)];
-        int n_sized_subsequences = 0;
-        for(unsigned long  i = 0; i < size; i++){
-            if(size_seq[i] == max_size ){
-                n_sized_subsequences += number_seq[i];
+            if (size_seq[i] > max_size){
+                max_size = size_seq[i];
+                number_of_subsequences=0;
             }
+
+            if (size_seq[i] == max_size)
+                number_of_subsequences += number_seq[i]; 
         }
-        cout << max_size << ' ' << n_sized_subsequences << endl;
+
+        cout << max_size << ' ' << number_of_subsequences << endl;
     }
     if(mode == "2"){
         unsigned long size1 = list.size();

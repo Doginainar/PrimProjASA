@@ -1,19 +1,20 @@
 #include <iostream>
 #include <sstream>
 #include <unordered_map>
+#include <chrono>
+#include <iomanip>
 
 using namespace std;
-
-unordered_map<int, int> map;
 
 string mode;
 string input1;
 string input2;
 
-unsigned long size = 0;
-unsigned long size2 = 0;
+unordered_map<int,int> map;
 
-void getIntsProb(string str, int flag)
+int size=0, size2 = 0;
+
+void getIntsProb(string str, int flag, string mode)
 {
     stringstream ss;
 
@@ -30,9 +31,11 @@ void getIntsProb(string str, int flag)
         {
             if (stringstream(temp) >> number)
             {
-                map[i]=number;
+                if (mode=="2"){
+                    map.insert(make_pair(number, i));
+                    i++;
+                }
                 size++;
-                i++;
             }
         }
 
@@ -40,10 +43,8 @@ void getIntsProb(string str, int flag)
         {
             if (stringstream(temp) >> number)
             {
-                unordered_map<int,int>::iterator iter = map.find(number);
-                if (iter!=map.end()){
+                if (map.find(number) != map.end())
                     size2++;
-                }
             }
         }
 
@@ -55,11 +56,11 @@ void parse()
 {
     getline(cin, mode);
     getline(cin, input1);
-    getIntsProb(input1, 1);
+    getIntsProb(input1, 1, mode);
     if (mode == "2")
     {
         getline(cin, input2);
-        getIntsProb(input2, 2);
+        getIntsProb(input2, 2, mode);
     }
 }
 
@@ -100,8 +101,7 @@ void get_numbers2(int array_list2[], string str)
         ss >> temp;
         if (stringstream(temp) >> number)
         {
-            unordered_map<int,int>::iterator iter = map.find(number);
-            if (iter!=map.end()){
+            if (map.find(number) != map.end()){
                 array_list2[i] = number;
                 i++;
             }
@@ -112,7 +112,7 @@ void get_numbers2(int array_list2[], string str)
 
 void initialize_arrays(int size_seq[], int number_seq[])
 {
-    for (unsigned long i = 0; i != size; i++)
+    for (int i = 0; i != size; i++)
     {
         size_seq[i] = 1;
         number_seq[i] = 1;
@@ -128,9 +128,9 @@ void prob1()
     int *array_list = new int[size];
     get_numbers1(array_list, input1);
     initialize_arrays(size_seq, number_seq);
-    for (unsigned long i = 1; i < size; i++)
+    for (int i = 1; i < size; i++)
     {
-        for (unsigned long j = 0; j < i; j++)
+        for (int j = 0; j < i; j++)
         {
             if (array_list[j] < array_list[i])
             {
@@ -145,6 +145,7 @@ void prob1()
                 {
                     number_seq[i] += number_seq[j];
                 }
+
             }
         }
         if (size_seq[i] > max_size)
@@ -168,29 +169,31 @@ void prob2()
     int *array_list2 = new int[size2];
     get_numbers2(array_list2, input2);
 
-    int table[size2];
-    int length=0;
-    for (unsigned long j=0; j<size2; j++)
-        table[j] = 0;
-  
-    for (unsigned long i=0; i<size; i++)
+    unsigned long index_longest[size2];
+    unsigned long length=0, lcis=0;
+    int j=0;
+    
+    while (j<size2){
+        index_longest[j]=0;
+        j++;
+    }
+    for (int i=0; i<size; i++, lcis=0)
     {
-
-        int lcis = 0;
   
-        for (unsigned long j=0; j<size2; j++)
+        for (j=0; j<size2; j++)
         {
             
             if (array_list[i] == array_list2[j])
-                if (lcis + 1 > table[j])
-                    table[j] = lcis + 1;
+                if (lcis + 1 > index_longest[j])
+                    index_longest[j] = lcis + 1;
   
             if (array_list[i] > array_list2[j])
-                if (table[j] > lcis)
-                    lcis = table[j];
+                if (index_longest[j] > lcis)
+                    lcis = index_longest[j];
+
+            if (index_longest[j] > length)
+                length = index_longest[j];
             
-            if (table[j]>length)
-                length=table[j];
         }
     }
   
@@ -200,6 +203,13 @@ void prob2()
 
 int main()
 {
+    
+    /*
+    clock_t start, end;
+
+    start = clock();
+    */
+
     parse();
     if (mode == "1")
     {
@@ -209,4 +219,15 @@ int main()
     {
         prob2();
     }
+
+    /*
+    end = clock();
+
+    double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+  
+    cout << "Time taken by program is : " << fixed 
+         << time_taken << setprecision(5);
+    cout << " sec " << endl;
+    */
+    
 }

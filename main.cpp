@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <chrono>
 #include <iomanip>
+#include <vector>
 
 using namespace std;
 
@@ -12,7 +13,7 @@ string input2;
 
 unordered_map<int,int> map;
 
-int size=0, size2 = 0;
+unsigned long size=0, size2=0;
 
 void getIntsProb(string str, int flag, string mode)
 {
@@ -112,7 +113,7 @@ void get_numbers2(int array_list2[], string str)
 
 void initialize_arrays(int size_seq[], int number_seq[])
 {
-    for (int i = 0; i != size; i++)
+    for (unsigned long i = 0; i != size; i++)
     {
         size_seq[i] = 1;
         number_seq[i] = 1;
@@ -126,36 +127,44 @@ void prob1()
     int *size_seq = new int[size];
     int *number_seq = new int[size];
     int *array_list = new int[size];
+    int number_seq_i, number_seq_j, size_seq_i, size_seq_j;
     get_numbers1(array_list, input1);
     initialize_arrays(size_seq, number_seq);
-    for (int i = 1; i < size; i++)
+    for (unsigned long i = 1; i < size; i++)
     {
-        for (int j = 0; j < i; j++)
+        number_seq_i=number_seq[i];
+        size_seq_i=size_seq[i];
+        for (unsigned long j = 0; j < i; j++)
         {
+            number_seq_j=number_seq[j];
+            size_seq_j=size_seq[j];
             if (array_list[j] < array_list[i])
             {
 
-                if (size_seq[j] + 1 > size_seq[i])
+                if (size_seq_j + 1 > size_seq_i)
                 {
-                    size_seq[i] = size_seq[j] + 1;
-                    number_seq[i] = number_seq[j];
+                    size_seq_i = size_seq_j + 1;
+                    number_seq_i = number_seq_j;
                 }
 
-                else if (size_seq[j] + 1 == size_seq[i])
+                else if (size_seq_j + 1 == size_seq_i)
                 {
-                    number_seq[i] += number_seq[j];
+                    number_seq_i += number_seq_j;
                 }
 
             }
         }
-        if (size_seq[i] > max_size)
+        if (size_seq_i > max_size)
         {
-            max_size = size_seq[i];
+            max_size = size_seq_i;
             number_of_subsequences = 0;
         }
 
-        if (size_seq[i] == max_size)
-            number_of_subsequences += number_seq[i];
+        if (size_seq_i == max_size)
+            number_of_subsequences += number_seq_i;
+
+        size_seq[i]=size_seq_i;
+        number_seq[i]=number_seq_i;
     }
 
     cout << max_size << ' ' << number_of_subsequences << endl;
@@ -170,26 +179,33 @@ void prob2()
     get_numbers2(array_list2, input2);
 
     unsigned long index_longest[size2];
-    unsigned long length=0, lcis=0;
-    int j=0;
+    vector<unsigned long> lcis;
+    unsigned long length=0;
+    unsigned long j=0, k=0;
     
     while (j<size2){
         index_longest[j]=0;
         j++;
     }
-    for (int i=0; i<size; i++, lcis=0)
+
+    while (k<size){
+        lcis.push_back(0);
+        k++;
+    }
+
+    for (unsigned long i=0; i<size; i++)
     {
   
         for (j=0; j<size2; j++)
         {
             
             if (array_list[i] == array_list2[j])
-                if (lcis + 1 > index_longest[j])
-                    index_longest[j] = lcis + 1;
+                if (lcis[i] + 1 > index_longest[j])
+                    index_longest[j] = lcis[i] + 1;
   
             if (array_list[i] > array_list2[j])
-                if (index_longest[j] > lcis)
-                    lcis = index_longest[j];
+                if (index_longest[j] > lcis[i])
+                    lcis[i] = index_longest[j];
 
             if (index_longest[j] > length)
                 length = index_longest[j];

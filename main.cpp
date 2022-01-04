@@ -2,6 +2,8 @@
 #include <sstream>
 #include <unordered_map>
 #include <vector>
+#include <chrono>
+#include <iomanip>
 
 using namespace std;
 
@@ -9,9 +11,10 @@ string mode;
 string input1;
 string input2;
 
-unordered_map<int,int> map;
+unordered_map<int, int> map;
+vector<int> array_list;
 
-unsigned long size=0, size2=0;
+unsigned long size = 0, size2 = 0;
 
 void getIntsProb(string str, int flag, string mode)
 {
@@ -20,35 +23,53 @@ void getIntsProb(string str, int flag, string mode)
     ss << str;
 
     string temp;
-    int number;
-    int i=0;
-    while (!ss.eof())
-    {
 
-        ss >> temp;
-        if (flag == 1)
+    int number, i = 0;
+
+    if (mode == "1")
+    {
+        while (!ss.eof())
         {
+
+            ss >> temp;
             if (stringstream(temp) >> number)
             {
-                if (mode=="2"){
-                    map.insert(make_pair(number, i));
-                    i++;
-                }
+                array_list.push_back(number);
+                size++;
+            }
+            temp = "";
+        }
+        return;
+    }
+
+while (!ss.eof())
+{
+
+    ss >> temp;
+    if (flag == 1)
+    {
+        if (stringstream(temp) >> number)
+        {
+            if (mode == "2")
+            {
+                map.insert(make_pair(number, i));
+                i++;
                 size++;
             }
         }
-
-        else
-        {
-            if (stringstream(temp) >> number)
-            {
-                if (map.find(number) != map.end())
-                    size2++;
-            }
-        }
-
-        temp = "";
     }
+
+    else
+    {
+        if (stringstream(temp) >> number)
+        {
+            if (map.find(number) != map.end())
+                size2++;
+        }
+    }
+
+    temp = "";
+}
 }
 
 void parse()
@@ -63,7 +84,7 @@ void parse()
     }
 }
 
-void get_numbers1(int array_list[], string str)
+void get_numbers2(int array_list[], string str)
 {
     stringstream ss;
 
@@ -78,90 +99,48 @@ void get_numbers1(int array_list[], string str)
         ss >> temp;
         if (stringstream(temp) >> number)
         {
-            array_list[i] = number;
-            i++;
-        }
-        temp="";
-    }
-}
-
-void get_numbers2(int array_list2[], string str)
-{
-    stringstream ss;
-
-    ss << str;
-
-    string temp;
-    int number;
-    int i = 0;
-    while (!ss.eof())
-    {
-
-        ss >> temp;
-        if (stringstream(temp) >> number)
-        {
-            if (map.find(number) != map.end()){
-                array_list2[i] = number;
+            if (map.find(number) != map.end())
+            {
+                array_list[i] = number;
                 i++;
             }
         }
-        temp="";
-    }
-}
-
-void initialize_arrays(int size_seq[], int number_seq[])
-{
-    for (unsigned long i = 0; i != size; i++)
-    {
-        size_seq[i] = 1;
-        number_seq[i] = 1;
+        temp = "";
     }
 }
 
 void prob1()
 {
-    int max_size = 1;
-    int number_of_subsequences = 1;
-    int *size_seq = new int[size];
-    int *number_seq = new int[size];
-    int *array_list = new int[size];
-    int number_seq_i, number_seq_j, size_seq_i, size_seq_j;
-    int changes = 0;
-    get_numbers1(array_list, input1);
-    initialize_arrays(size_seq, number_seq);
+    int *size_seq = new int[size], *number_seq = new int[size];
+    int max_size = 1, number_of_subsequences = 1;
+    int number_seq_i, number_seq_j, size_seq_i, size_seq_j, array_list_i;
+    size_seq[0]=1;
+    number_seq[0]=1;
 
     for (unsigned long i = 1; i < size; i++)
     {
-
-        changes=0;
-        // So quando o loop entra no if e que queremos passar estes valores para baixo. Nao e sempre preciso
-        // inicializar 2 arrays e percorrer mais 1 vez compensa em relacao a inicializar 1 vetor?
-        // Fazer um teste com 1000000 de numeros em ordem crescente e outro com ordem decrescente e comparar os tempos de execucao
-        number_seq_i=number_seq[i];
-        size_seq_i=size_seq[i];
+        number_seq_i = 1;
+        size_seq_i = 1;
+        array_list_i = array_list[i];
 
         for (unsigned long j = 0; j < i; j++)
         {
-            
-            if (array_list[j] < array_list[i])
+
+            if (array_list[j] < array_list_i)
             {
-                number_seq_j=number_seq[j];
-                size_seq_j=size_seq[j];
+                number_seq_j = number_seq[j];
+                size_seq_j = size_seq[j];
 
                 if (size_seq_j + 1 > size_seq_i)
                 {
                     size_seq_i = size_seq_j + 1;
                     number_seq_i = number_seq_j;
-                    changes=1;
-                    
                 }
 
                 else if (size_seq_j + 1 == size_seq_i)
                 {
                     number_seq_i += number_seq_j;
-                    changes=1;
                 }
-
             }
         }
         if (size_seq_i > max_size)
@@ -172,12 +151,9 @@ void prob1()
 
         if (size_seq_i == max_size)
             number_of_subsequences += number_seq_i;
-        
-        if (changes==1){
-            size_seq[i]=size_seq_i;
-            number_seq[i]=number_seq_i;
-        }
 
+        size_seq[i] = size_seq_i;
+        number_seq[i] = number_seq_i;
     }
 
     cout << max_size << ' ' << number_of_subsequences << endl;
@@ -186,53 +162,51 @@ void prob1()
 void prob2()
 {
     int *array_list = new int[size];
-    get_numbers1(array_list, input1);
+    get_numbers2(array_list, input1);
 
     int *array_list2 = new int[size2];
     get_numbers2(array_list2, input2);
 
     unsigned long index_longest[size2];
-    vector<unsigned long> lcis;
-    unsigned long length=0;
-    unsigned long j=0, k=0;
-    
-    while (j<size2){
-        index_longest[j]=0;
+    unsigned long lcis = 0, length = 0, j = 0, index_longest_j=0, array_list_i=0, array_list2_j=0;
+
+    while (j < size2)
+    {
+        index_longest[j] = 0;
         j++;
     }
 
-    while (k<size){
-        lcis.push_back(0);
-        k++;
-    }
-
-    for (unsigned long i=0; i<size; i++)
+    for (unsigned long i = 0; i < size; i++, lcis=0)
     {
-  
-        for (j=0; j<size2; j++)
-        {
-            
-            if (array_list[i] == array_list2[j])
-                if (lcis[i] + 1 > index_longest[j])
-                    index_longest[j] = lcis[i] + 1;
-  
-            if (array_list[i] > array_list2[j])
-                if (index_longest[j] > lcis[i])
-                    lcis[i] = index_longest[j];
+        array_list_i = array_list[i];
 
-            if (index_longest[j] > length)
-                length = index_longest[j];
-            
+        for (j = 0; j < size2; j++)
+        {
+            index_longest_j = index_longest[j];
+            array_list2_j = array_list2[j];
+
+            if (array_list_i == array_list2_j)
+                if (lcis + 1 > index_longest_j){
+                    index_longest[j] = lcis + 1;
+                    index_longest_j = lcis + 1;
+                }
+
+            if (array_list_i > array_list2_j)
+                if (index_longest_j > lcis)
+                    lcis = index_longest_j;
+
+            if (index_longest_j > length)
+                length = index_longest_j;
         }
+
     }
-  
+
     cout << length << endl;
-  
 }
 
 int main()
 {
-    
+
     /*
     clock_t start, end;
 
@@ -253,10 +227,9 @@ int main()
     end = clock();
 
     double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
-  
-    cout << "Time taken by program is : " << fixed 
+
+    cout << "Time taken by program is : " << fixed
          << time_taken << setprecision(5);
     cout << " sec " << endl;
     */
-    
 }

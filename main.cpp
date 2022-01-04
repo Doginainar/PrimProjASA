@@ -1,8 +1,6 @@
 #include <iostream>
 #include <sstream>
 #include <unordered_map>
-#include <chrono>
-#include <iomanip>
 #include <vector>
 
 using namespace std;
@@ -128,28 +126,40 @@ void prob1()
     int *number_seq = new int[size];
     int *array_list = new int[size];
     int number_seq_i, number_seq_j, size_seq_i, size_seq_j;
+    int changes = 0;
     get_numbers1(array_list, input1);
     initialize_arrays(size_seq, number_seq);
+
     for (unsigned long i = 1; i < size; i++)
     {
+
+        changes=0;
+        // So quando o loop entra no if e que queremos passar estes valores para baixo. Nao e sempre preciso
+        // inicializar 2 arrays e percorrer mais 1 vez compensa em relacao a inicializar 1 vetor?
+        // Fazer um teste com 1000000 de numeros em ordem crescente e outro com ordem decrescente e comparar os tempos de execucao
         number_seq_i=number_seq[i];
         size_seq_i=size_seq[i];
+
         for (unsigned long j = 0; j < i; j++)
         {
-            number_seq_j=number_seq[j];
-            size_seq_j=size_seq[j];
+            
             if (array_list[j] < array_list[i])
             {
+                number_seq_j=number_seq[j];
+                size_seq_j=size_seq[j];
 
                 if (size_seq_j + 1 > size_seq_i)
                 {
                     size_seq_i = size_seq_j + 1;
                     number_seq_i = number_seq_j;
+                    changes=1;
+                    
                 }
 
                 else if (size_seq_j + 1 == size_seq_i)
                 {
                     number_seq_i += number_seq_j;
+                    changes=1;
                 }
 
             }
@@ -162,9 +172,12 @@ void prob1()
 
         if (size_seq_i == max_size)
             number_of_subsequences += number_seq_i;
+        
+        if (changes==1){
+            size_seq[i]=size_seq_i;
+            number_seq[i]=number_seq_i;
+        }
 
-        size_seq[i]=size_seq_i;
-        number_seq[i]=number_seq_i;
     }
 
     cout << max_size << ' ' << number_of_subsequences << endl;

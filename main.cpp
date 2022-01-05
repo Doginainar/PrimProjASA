@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <unordered_map>
+#include <vector>
 #include <chrono>
 #include <iomanip>
 
@@ -11,6 +12,8 @@ string input1;
 string input2;
 
 unordered_map<int, int> map;
+
+vector<vector<int>> index_longest;
 
 unsigned long size = 0, size2 = 0;
 
@@ -186,13 +189,16 @@ void prob2()
     int *array_list2 = new int[size2];
     get_numbers2(array_list2, input2);
 
-    unsigned long index_longest[size2];
-    unsigned long lcis = 0, length = 0, j = 0, index_longest_j = 0, array_list_i = 0, array_list2_j = 0;
+    unsigned long k=0, lcis = 0, length = 0, j = 0, index_longest_j = 0, array_list_i = 0, array_list2_j = 0;
 
-    while (j < size2)
-    {
-        index_longest[j] = 0;
-        j++;
+    while (k <= size){
+        vector<int> aux_vec;
+        while (j<=size2){
+            aux_vec.push_back(0);
+            j++;
+        }
+        index_longest.push_back(aux_vec);
+        k++;
     }
 
     for (unsigned long i = 0; i < size; i++, lcis = 0)
@@ -201,13 +207,18 @@ void prob2()
 
         for (j = 0; j < size2; j++)
         {
-            index_longest_j = index_longest[j];
+            if (i==0){
+                index_longest_j=0;
+            }
+            else{
+                index_longest_j = index_longest[i-1][j];
+            }
             array_list2_j = array_list2[j];
 
             if (array_list_i == array_list2_j)
                 if (lcis + 1 > index_longest_j)
                 {
-                    index_longest[j] = lcis + 1;
+                    index_longest[i][j] = lcis + 1;
                     index_longest_j = lcis + 1;
                 }
 

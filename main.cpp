@@ -1,7 +1,6 @@
 #include <iostream>
 #include <sstream>
 #include <unordered_map>
-#include <vector>
 #include <chrono>
 #include <iomanip>
 
@@ -12,7 +11,6 @@ string input1;
 string input2;
 
 unordered_map<int, int> map;
-vector<int> array_list;
 
 unsigned long size = 0, size2 = 0;
 
@@ -34,7 +32,6 @@ void getIntsProb(string str, int flag, string mode)
             ss >> temp;
             if (stringstream(temp) >> number)
             {
-                array_list.push_back(number);
                 size++;
             }
             temp = "";
@@ -42,34 +39,34 @@ void getIntsProb(string str, int flag, string mode)
         return;
     }
 
-while (!ss.eof())
-{
-
-    ss >> temp;
-    if (flag == 1)
+    while (!ss.eof())
     {
-        if (stringstream(temp) >> number)
+
+        ss >> temp;
+        if (flag == 1)
         {
-            if (mode == "2")
+            if (stringstream(temp) >> number)
             {
-                map.insert(make_pair(number, i));
-                i++;
-                size++;
+                if (mode == "2")
+                {
+                    map.insert(make_pair(number, i));
+                    i++;
+                    size++;
+                }
             }
         }
-    }
 
-    else
-    {
-        if (stringstream(temp) >> number)
+        else
         {
-            if (map.find(number) != map.end())
-                size2++;
+            if (stringstream(temp) >> number)
+            {
+                if (map.find(number) != map.end())
+                    size2++;
+            }
         }
-    }
 
-    temp = "";
-}
+        temp = "";
+    }
 }
 
 void parse()
@@ -81,6 +78,27 @@ void parse()
     {
         getline(cin, input2);
         getIntsProb(input2, 2, mode);
+    }
+}
+
+void get_numbers(int array_list[], string str){
+    stringstream ss;
+
+    ss << str;
+
+    string temp;
+    int number;
+    int i = 0;
+    while (!ss.eof())
+    {
+
+        ss >> temp;
+        if (stringstream(temp) >> number)
+        {
+            array_list[i] = number;
+            i++;
+        }
+        temp = "";
     }
 }
 
@@ -111,11 +129,12 @@ void get_numbers2(int array_list[], string str)
 
 void prob1()
 {
-    int *size_seq = new int[size], *number_seq = new int[size];
+    int *size_seq = new int[size], *number_seq = new int[size], *array_list = new int[size];
+    get_numbers(array_list, input1);
     int max_size = 1, number_of_subsequences = 1;
     int number_seq_i, number_seq_j, size_seq_i, size_seq_j, array_list_i;
-    size_seq[0]=1;
-    number_seq[0]=1;
+    size_seq[0] = 1;
+    number_seq[0] = 1;
 
     for (unsigned long i = 1; i < size; i++)
     {
@@ -168,7 +187,7 @@ void prob2()
     get_numbers2(array_list2, input2);
 
     unsigned long index_longest[size2];
-    unsigned long lcis = 0, length = 0, j = 0, index_longest_j=0, array_list_i=0, array_list2_j=0;
+    unsigned long lcis = 0, length = 0, j = 0, index_longest_j = 0, array_list_i = 0, array_list2_j = 0;
 
     while (j < size2)
     {
@@ -176,7 +195,7 @@ void prob2()
         j++;
     }
 
-    for (unsigned long i = 0; i < size; i++, lcis=0)
+    for (unsigned long i = 0; i < size; i++, lcis = 0)
     {
         array_list_i = array_list[i];
 
@@ -186,7 +205,8 @@ void prob2()
             array_list2_j = array_list2[j];
 
             if (array_list_i == array_list2_j)
-                if (lcis + 1 > index_longest_j){
+                if (lcis + 1 > index_longest_j)
+                {
                     index_longest[j] = lcis + 1;
                     index_longest_j = lcis + 1;
                 }
@@ -198,7 +218,6 @@ void prob2()
             if (index_longest_j > length)
                 length = index_longest_j;
         }
-
     }
 
     cout << length << endl;

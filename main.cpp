@@ -1,9 +1,6 @@
 #include <iostream>
 #include <sstream>
 #include <unordered_map>
-#include <vector>
-#include <chrono>
-#include <iomanip>
 
 using namespace std;
 
@@ -132,8 +129,8 @@ void prob1()
 {
     int *size_seq = new int[size], *number_seq = new int[size], *array_list = new int[size];
     get_numbers(array_list, input1);
-    int max_size = 1, number_of_subsequences = 1;
-    int number_seq_i, number_seq_j, size_seq_i, size_seq_j, array_list_i;
+    int max_size = 1, number_of_subsequences = 0;
+    int number_seq_i, size_seq_i, array_list_i;
     size_seq[0] = 1;
     number_seq[0] = 1;
 
@@ -145,35 +142,31 @@ void prob1()
 
         for (unsigned long j = 0; j < i; j++)
         {
-
             if (array_list[j] < array_list_i)
             {
-                number_seq_j = number_seq[j];
-                size_seq_j = size_seq[j];
-
-                if (size_seq_j + 1 > size_seq_i)
+                if (size_seq[j] + 1 > size_seq_i)
                 {
-                    size_seq_i = size_seq_j + 1;
-                    number_seq_i = number_seq_j;
+                    size_seq_i = size_seq[j] + 1;
+                    number_seq_i = number_seq[j];
                 }
 
-                else if (size_seq_j + 1 == size_seq_i)
+                else if (size_seq[j] + 1 == size_seq_i)
                 {
-                    number_seq_i += number_seq_j;
+                    number_seq_i += number_seq[j];
                 }
             }
         }
         if (size_seq_i > max_size)
         {
             max_size = size_seq_i;
-            number_of_subsequences = 0;
         }
-
-        if (size_seq_i == max_size)
-            number_of_subsequences += number_seq_i;
-
         size_seq[i] = size_seq_i;
         number_seq[i] = number_seq_i;
+    }
+
+    for (unsigned long i=0; i!=size; i++){
+        if (size_seq[i]==max_size)
+            number_of_subsequences+=number_seq[i];
     }
 
     cout << max_size << ' ' << number_of_subsequences << endl;
@@ -225,13 +218,6 @@ void prob2()
 
 int main()
 {
-
-    /*
-    clock_t start, end;
-
-    start = clock();
-    */
-
     parse();
     if (mode == "1")
     {
@@ -241,14 +227,4 @@ int main()
     {
         prob2();
     }
-
-    /*
-    end = clock();
-
-    double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
-
-    cout << "Time taken by program is : " << fixed
-         << time_taken << setprecision(5);
-    cout << " sec " << endl;
-    */
 }
